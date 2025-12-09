@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8번 문항 심층 해설 (최종 수정본)</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f6f8;
+            padding: 40px 20px;
+            color: #333;
+            line-height: 1.7;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+        .problem-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .problem-number {
+            background-color: #c0392b;
+            color: #fff;
+            font-weight: 900;
+            padding: 8px 16px;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-size: 1.3em;
+        }
+        .problem-title {
+            font-weight: 800;
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+        .section-block {
+            margin-bottom: 40px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            border: 1px solid #eee;
+        }
+        .section-label {
+            display: inline-block;
+            font-weight: 800;
+            font-size: 1.05em;
+            margin-bottom: 15px;
+            padding: 6px 14px;
+            border-radius: 6px;
+        }
+        .idea-label { background-color: #fde8e8; color: #c0392b; }
+        .solution-label { background-color: #e8f4fd; color: #2980b9; }
+        .killer-label { background-color: #eafaf1; color: #27ae60; }
+        
+        .content {
+            font-size: 1.05em;
+            color: #444;
+            margin-bottom: 10px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #d35400;
+        }
+        .calculation-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2980b9;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            margin: 10px 0;
+        }
+
+        /* 인터랙티브 그래프 스타일 */
+        #graph-wrapper {
+            border: 2px solid #e1e4e8;
+            border-radius: 12px;
+            padding: 20px;
+            background-color: #fafafa;
+            margin-top: 20px;
+        }
+        #graph-container {
+            width: 100%;
+            height: 450px;
+            background-color: #fff;
+            border-radius: 8px;
+        }
+        .controls {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #ddd;
+        }
+        .slider-container {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        input[type=range] { flex-grow: 1; cursor: pointer; }
+        .k-value-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e67e22;
+            min-width: 60px;
+            text-align: center;
+        }
+        .status-message {
+            margin-top: 10px;
+            font-size: 0.95em;
+            color: #555;
+            font-weight: 500;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="problem-header">
+        <span class="problem-number">8번</span>
+        <span class="problem-title">절댓값 방정식과 실근의 개수 (최종 수정본)</span>
+    </div>
+
+    <div class="section-block">
+        <div class="section-label idea-label">1. 문제 분석 및 발상</div>
+        <div class="content">
+            이 문제는 방정식 \(|f(x)|=g(x)\)의 실근 개수를 묻는 고난도 문항입니다.<br>
+            핵심은 다음 두 가지 조건으로 문제를 분해하는 것입니다.<br><br>
+            <strong>① 정의구역 제한:</strong> \(g(x) \ge 0\)이어야 하므로 \(2x^2-2 \ge 0\), 즉 <span class="highlight">\(|x| \ge 1\)</span>인 범위에서만 실근이 유효합니다.<br>
+            <strong>② 그래프의 교점:</strong> 방정식을 풀면 다음 두 경우의 교점을 찾는 것과 같습니다.<br>
+            $$ \begin{cases} f(x) = g(x) \implies x^3-2x^2+8 = kx \quad (\text{곡선 } h_1) \\ f(x) = -g(x) \implies x^3+2x^2+4 = kx \quad (\text{곡선 } h_2) \end{cases} $$
+        </div>
+    </div>
+
+    <div class="section-block">
+        <div class="section-label solution-label">2. 단계별 풀이 (ㄱ, ㄴ)</div>
+        <div class="content">
+            <strong>[ㄱ 보기] \(k=0\)일 때</strong><br>
+            \(h_2(x) = x^3+2x^2+4=0\)은 극솟값(4)이 양수이므로 \(x<0\)에서 오직 하나의 실근을 가집니다. <span class="highlight">→ 참</span><br><br>
+
+            <strong>[ㄴ 보기] \(f(x)-g(x)=0\) 실근 2개 조건</strong><br>
+            \(x^3 - 2x^2 + 8 = kx\)의 실근이 2개가 되려면, 직선이 곡선에 <strong>접해야</strong> 합니다.<br>
+            접하는 \(k\)값이 4인지 확인해 봅시다.
+            
+            <div class="calculation-box">
+                <strong>[검증] \(k=4\)를 대입해보자.</strong><br>
+                $$ x^3 - 2x^2 + 8 = 4x $$
+                $$ x^3 - 2x^2 - 4x + 8 = 0 $$
+                조립제법이나 인수분해를 하면:<br>
+                $$ x^2(x-2) - 4(x-2) = 0 $$
+                $$ (x^2-4)(x-2) = 0 $$
+                $$ (x+2)\mathbf{(x-2)^2} = 0 $$
+            </div>
+            
+            \((x-2)^2\)이라는 인수가 나왔으므로, <strong>\(x=2\)에서 중근(접함)</strong>을 갖는 것이 확인되었습니다.<br>
+            따라서 \(k=4\)일 때 교점이 2개가 됩니다. <span class="highlight">→ 참</span>
+        </div>
+    </div>
+
+    <div class="section-block" style="border: 2px solid #27ae60;">
+        <div class="section-label killer-label">3. 심층 분석 (ㄷ 보기)</div>
+        <div class="content">
+            <strong>[ㄷ 보기] 서로 다른 실근 개수가 5개?</strong><br>
+            이제 아래 슬라이더를 <strong>정수 단위(1, 2, 3...)</strong>로 움직여보며 확인해 봅시다.<br>
+            특히 <span style="color:#c0392b; font-weight:bold;">k=7</span>일 때 교점이 어떻게 만나는지 집중해서 보세요.
+        </div>
+
+        <div id="graph-wrapper">
+            <div class="legend">
+                <span><span class="dot" style="background:#3498db;"></span>h₁(x)</span>
+                <span><span class="dot" style="background:#2ecc71;"></span>h₂(x)</span>
+                <span><span class="dot" style="background:#e67e22;"></span>y=kx</span>
+                <span><span class="dot" style="background:#ccc;"></span>무효구간(|x|<1)</span>
+            </div>
+            
+            <div id="graph-container"></div>
+            
+            <div class="controls">
+                <div class="slider-container">
+                    <strong>k 조절:</strong>
+                    <input type="range" id="k-slider" min="0" max="12" step="1" value="0">
+                    <span class="k-value-display" id="k-display">k = 0</span>
+                </div>
+                <div class="status-message" id="status-msg">슬라이더를 움직여보세요.</div>
+            </div>
+        </div>
+
+        <div class="content" style="margin-top: 20px;">
+            <strong>[결론 도출]</strong><br>
+            1. <strong>k=4일 때:</strong> 파란색 곡선(\(h_1\))과 접합니다. (ㄴ 보기 확인)<br>
+            2. <strong>k=7일 때 (핵심):</strong> 초록색 곡선(\(h_2\))과 접합니다.<br>
+               - \(h_2(1) = 1+2+4 = 7\) 이므로 접점은 \((1, 7)\)입니다.<br>
+               - \(h_1(1) = 1-2+8 = 7\) 이므로 파란색 곡선도 \((1, 7)\)을 지납니다.<br>
+               - 즉, <strong>(1, 7)에서 세 그래프가 동시에 만나 중복근</strong>이 되므로 실근 5개가 불가능합니다.<br>
+            3. <strong>k>7일 때:</strong> 교점이 많아 보이지만, \(|x|<1\) 구간의 교점은 <strong>무효</strong>입니다.<br><br>
+            따라서 5개가 되는 \(k\)는 없습니다. <span class="highlight">→ ㄷ 거짓</span><br><br>
+            <strong>∴ 최종 정답: ② ㄱ, ㄴ</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const kSlider = document.getElementById('k-slider');
+        const kDisplay = document.getElementById('k-display');
+        const statusMsg = document.getElementById('status-msg');
+        
+        function updateGraph(k) {
+            const width = document.getElementById('graph-container').offsetWidth;
+            
+            // 상태 메시지 업데이트
+            let msg = "";
+            let color = "#555";
+            let weight = "normal";
+
+            // 정수 비교이므로 == 사용 가능
+            if (k == 4) {
+                msg = "✅ k=4: 파란 곡선과 x=2에서 접함 (ㄴ 참 확인)";
+                color = "#d35400"; weight = "bold";
+            } else if (k == 7) {
+                msg = "🔥 k=7: (1, 7)에서 세 그래프가 동시에 만남! (중근)";
+                color = "#c0392b"; weight = "bold";
+            } else if (k > 7) {
+                msg = "회색 구간(|x|<1)의 교점은 '무효'입니다. (실근 4개)";
+                color = "#7f8c8d";
+            } else {
+                msg = `현재 기울기 k = ${k}`;
+            }
+
+            statusMsg.textContent = msg;
+            statusMsg.style.color = color;
+            statusMsg.style.fontWeight = weight;
+
+            functionPlot({
+                target: '#graph-container',
+                width: width,
+                height: 450,
+                yAxis: { domain: [-5, 20] },
+                xAxis: { domain: [-3, 3] },
+                grid: true,
+                data: [
+                    // 무효 구간 가이드라인
+                    { fn: '1000*(x-1)', color: '#ddd', fnType: 'implicit', skipTip: true },
+                    { fn: '1000*(x+1)', color: '#ddd', fnType: 'implicit', skipTip: true },
+                    
+                    // 함수 그래프
+                    { fn: 'x^3 - 2*x^2 + 8', color: '#3498db' }, // h1
+                    { fn: 'x^3 + 2*x^2 + 4', color: '#2ecc71' }, // h2
+                    { fn: `${k} * x`, color: '#e67e22', graphType: 'polyline' } // y=kx
+                ],
+                annotations: [
+                    {x: 1, text: "x=1"},
+                    {x: -1, text: "x=-1"}
+                ]
+            });
+        }
+
+        // 초기 실행
+        updateGraph(0);
+
+        // 이벤트 리스너
+        kSlider.addEventListener('input', function() {
+            const k = parseInt(this.value); // 정수로 처리
+            kDisplay.textContent = `k = ${k}`;
+            updateGraph(k);
+        });
+
+        window.addEventListener('resize', function() {
+            updateGraph(parseInt(kSlider.value));
+        });
+    });
+</script>
+
+</body>
+</html>
