@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30번 기하 문항 해설</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px 10px;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+        .problem-header {
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        .problem-number {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: 900;
+            padding: 5px 12px;
+            border-radius: 6px;
+            margin-right: 10px;
+            font-size: 1.1em;
+            flex-shrink: 0;
+        }
+        .problem-title {
+            font-weight: 800;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        
+        /* 도형 시각화 영역 */
+        #geometry-container {
+            width: 100%;
+            height: 400px;
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 500px; /* PC에서 너무 커지지 않게 */
+        }
+
+        /* SVG 요소 스타일 */
+        .shape {
+            fill: transparent;
+            stroke: #555;
+            stroke-width: 1.5;
+            transition: all 0.4s ease;
+        }
+        .circle {
+            fill: none;
+            stroke: #333;
+            stroke-width: 2;
+        }
+        .label {
+            font-size: 14px;
+            font-weight: bold;
+            fill: #333;
+        }
+        
+        /* 하이라이트 클래스 (JS로 제어) */
+        .highlight-blue {
+            fill: rgba(52, 152, 219, 0.3) !important;
+            stroke: #3498db !important;
+            stroke-width: 3 !important;
+        }
+        .highlight-red {
+            fill: rgba(231, 76, 60, 0.3) !important;
+            stroke: #e74c3c !important;
+            stroke-width: 3 !important;
+        }
+        .highlight-green {
+            fill: rgba(46, 204, 113, 0.3) !important;
+            stroke: #2ecc71 !important;
+            stroke-width: 3 !important;
+        }
+        .highlight-orange {
+            fill: rgba(230, 126, 34, 0.3) !important;
+            stroke: #e67e22 !important;
+            stroke-width: 3 !important;
+        }
+
+        /* 컨트롤 버튼 */
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95em;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-reset { background-color: #ecf0f1; color: #333; }
+        .btn-step1 { background-color: #3498db; color: white; }
+        .btn-step2 { background-color: #2ecc71; color: white; }
+        
+        /* 설명 박스 */
+        .explanation-box {
+            background-color: #fafafa;
+            border-left: 4px solid #ccc;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 0.95em;
+            display: none; /* 초기엔 숨김 */
+        }
+        .show { display: block; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="problem-header">
+        <span class="problem-number">30번</span>
+        <span class="problem-title">원과 비례, 삼각형의 합동</span>
+    </div>
+
+    <div id="geometry-container">
+        <svg viewBox="0 0 400 400">
+            <circle cx="200" cy="200" r="140" class="circle" />
+            
+            <polygon points="200,60 60,340 340,340" class="shape" id="tri-abc" style="stroke:none; fill:none;"/>
+            
+            <polygon points="200,60 120,280 250,340" class="shape" id="tri-dag" />
+            <polygon points="310,250 250,340 340,340" class="shape" id="tri-egc" />
+            <polygon points="120,280 60,340 250,340" class="shape" id="tri-dbg" /> 
+            <polygon points="310,250 250,340 200,60" class="shape" id="tri-ega" />
+
+            <line x1="200" y1="60" x2="60" y2="340" stroke="#333" /> <line x1="200" y1="60" x2="340" y2="340" stroke="#333" /> <line x1="60" y1="340" x2="340" y2="340" stroke="#333" /> <line x1="120" y1="280" x2="250" y2="340" stroke="#555" /> <line x1="250" y1="340" x2="310" y2="250" stroke="#555" /> <line x1="120" y1="280" x2="200" y2="340" stroke="#555" /> <text x="195" y="50" class="label">A</text>
+            <text x="45" y="350" class="label">B</text>
+            <text x="345" y="350" class="label">C</text>
+            <text x="105" y="280" class="label">D</text>
+            <text x="315" y="250" class="label">E</text>
+            <text x="180" y="355" class="label">F</text>
+            <text x="250" y="355" class="label">G</text>
+        </svg>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-reset" onclick="resetView()">처음으로</button>
+        <button class="btn btn-step1" onclick="showStep1()">Step 1: 닮음 찾기</button>
+        <button class="btn btn-step2" onclick="showStep2()">Step 2: 합동 찾기</button>
+    </div>
+
+    <div id="desc-default" class="explanation-box show" style="border-left-color: #333;">
+        <strong>[문제 분석]</strong><br>
+        복잡해 보이지만 <strong>닮음</strong>과 <strong>합동</strong> 두 가지만 찾으면 끝나는 문제입니다.<br>
+        위의 버튼을 눌러 숨어있는 도형을 찾아보세요.
+    </div>
+
+    <div id="desc-step1" class="explanation-box" style="border-left-color: #3498db;">
+        <strong>[Step 1] 닮음의 발견</strong><br>
+        <span style="color:#3498db; font-weight:bold;">파란색(△DAG)</span>와 <span style="color:#e74c3c; font-weight:bold;">빨간색(△EGC)</span>를 보세요.<br><br>
+        1. 원주각 성질에 의해 각도가 같습니다.<br>
+        2. \(\triangle DAG \sim \triangle EGC\) (AA 닮음)<br>
+        3. 문제 조건 \(AG = 3GC\) 이므로 <strong>닮음비는 3:1</strong><br>
+        4. 넓이비는 \(3^2 : 1^2 = 9:1\)<br>
+        $$ \therefore \triangle DAG = 9 \times \triangle EGC = 9 \times 8 = 72 $$
+    </div>
+
+    <div id="desc-step2" class="explanation-box" style="border-left-color: #2ecc71;">
+        <strong>[Step 2] 합동과 정답</strong><br>
+        <span style="color:#27ae60; font-weight:bold;">초록색(△DBG)</span>와 <span style="color:#e67e22; font-weight:bold;">주황색(△EGA)</span>를 보세요.<br><br>
+        1. 변의 길이가 같고(\(DB=EG\), \(DG=EA\)), 끼인각이 같습니다.<br>
+        2. \(\triangle DBG \equiv \triangle EGA\) (SAS 합동)<br>
+        3. 따라서 두 삼각형의 넓이는 같습니다. (\(S_{green} = S_{orange}\))<br><br>
+        <strong>[최종 계산]</strong><br>
+        구하는 값 \(S - T\)는 공통 부분(합동인 삼각형)이 사라지므로:<br>
+        $$ S - T = (\triangle DAG + S_{green}) - (\triangle EGC + S_{orange}) $$
+        $$ = \triangle DAG - \triangle EGC $$
+        $$ = 72 - 8 = 64 $$
+    </div>
+
+</div>
+
+<script>
+    // 요소 선택
+    const triDAG = document.getElementById('tri-dag');
+    const triEGC = document.getElementById('tri-egc');
+    const triDBG = document.getElementById('tri-dbg');
+    const triEGA = document.getElementById('tri-ega');
+    
+    const boxDefault = document.getElementById('desc-default');
+    const boxStep1 = document.getElementById('desc-step1');
+    const boxStep2 = document.getElementById('desc-step2');
+
+    function resetView() {
+        // 스타일 초기화
+        triDAG.setAttribute('class', 'shape');
+        triEGC.setAttribute('class', 'shape');
+        triDBG.setAttribute('class', 'shape');
+        triEGA.setAttribute('class', 'shape');
+        
+        // 설명창 초기화
+        boxDefault.style.display = 'block';
+        boxStep1.style.display = 'none';
+        boxStep2.style.display = 'none';
+    }
+
+    function showStep1() {
+        resetView();
+        boxDefault.style.display = 'none';
+        boxStep1.style.display = 'block';
+        
+        // 닮음 도형 강조 (파랑, 빨강)
+        triDAG.setAttribute('class', 'shape highlight-blue'); // 큰 놈
+        triEGC.setAttribute('class', 'shape highlight-red');  // 작은 놈
+    }
+
+    function showStep2() {
+        resetView();
+        boxDefault.style.display = 'none';
+        boxStep2.style.display = 'block';
+        
+        // 합동 도형 강조 (초록, 주황)
+        triDBG.setAttribute('class', 'shape highlight-green');
+        triEGA.setAttribute('class', 'shape highlight-orange');
+    }
+</script>
+
+</body>
+</html>
