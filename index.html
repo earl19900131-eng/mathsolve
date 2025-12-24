@@ -1,326 +1,248 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>8번 문항 심층 해설 (반응형)</title>
-    
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://unpkg.com/function-plot/dist/function-plot.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
-    <style>
-        /* 기본 설정 */
-        * { box-sizing: border-box; } /* 테두리 포함 크기 계산 */
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 20px 10px; /* 모바일 여백 최적화 */
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        /* 컨테이너: PC에서는 최대 900px, 모바일에서는 100% */
-        .container {
-            max-width: 900px;
-            width: 100%; 
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 25px; /* 내부 여백 */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border-radius: 12px;
-        }
-
-        /* 헤더 스타일 */
-        .problem-header {
-            border-bottom: 3px solid #2c3e50;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap; /* 화면 좁으면 줄바꿈 */
-        }
-        .problem-number {
-            background-color: #c0392b;
-            color: #fff;
-            font-weight: 900;
-            padding: 5px 12px;
-            border-radius: 6px;
-            margin-right: 10px;
-            font-size: 1.1em;
-            flex-shrink: 0; /* 번호표 안 찌그러지게 */
-        }
-        .problem-title {
-            font-weight: 800;
-            font-size: 1.1em;
-            color: #2c3e50;
-            word-break: keep-all; /* 단어 단위 줄바꿈 */
-        }
-
-        /* 섹션 라벨 */
-        .section-block {
-            margin-bottom: 30px;
-            padding: 15px;
-            border-radius: 10px;
-            background-color: #fff;
-            border: 1px solid #eee;
-        }
-        .section-label {
-            display: inline-block;
-            font-weight: 800;
-            font-size: 1em;
-            margin-bottom: 10px;
-            padding: 4px 10px;
-            border-radius: 4px;
-        }
-        .idea-label { background-color: #fde8e8; color: #c0392b; }
-        .solution-label { background-color: #e8f4fd; color: #2980b9; }
-        .killer-label { background-color: #eafaf1; color: #27ae60; }
-        
-        .content {
-            font-size: 1em;
-            color: #444;
-            word-wrap: break-word; /* 긴 수식 줄바꿈 */
-        }
-        .highlight {
-            background-color: #fff3cd;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: bold;
-            color: #d35400;
-        }
-        
-        /* 계산 박스 */
-        .calculation-box {
-            background-color: #f8f9fa;
-            border-left: 4px solid #2980b9;
-            padding: 10px;
-            font-family: monospace; /* 등폭 폰트 */
-            font-size: 0.9em;
-            margin: 10px 0;
-            overflow-x: auto; /* 수식 길면 가로 스크롤 */
-        }
-
-        /* 그래프 영역 */
-        #graph-wrapper {
-            border: 2px solid #e1e4e8;
-            border-radius: 12px;
-            padding: 10px; /* 모바일에서는 패딩 줄임 */
-            background-color: #fafafa;
-            margin-top: 15px;
-        }
-        #graph-container {
-            width: 100%;
-            height: 350px; /* 모바일 높이 조정 */
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden; /* 튀어나감 방지 */
-        }
-
-        /* 범례 (Legend) */
-        .legend {
-            display: flex;
-            flex-wrap: wrap; /* 화면 좁으면 줄바꿈 */
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            font-size: 0.85em;
-        }
-        .legend span { white-space: nowrap; } /* 줄바꿈 방지 */
-        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-
-        /* 컨트롤러 (슬라이더) */
-        .controls {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        /* 슬라이더 터치 영역 확대 */
-        input[type=range] {
-            flex-grow: 1;
-            cursor: pointer;
-            height: 25px; /* 터치하기 편하게 높이 키움 */
-        }
-        .k-value-display {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #e67e22;
-            min-width: 50px;
-            text-align: right;
-        }
-        .status-message {
-            margin-top: 8px;
-            font-size: 0.9em;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        /* 모바일 전용 스타일 (화면폭 600px 이하) */
-        @media (max-width: 600px) {
-            .container { padding: 15px; }
-            .problem-title { font-size: 1em; }
-            #graph-container { height: 300px; } /* 그래프 높이 줄임 */
-            h1 { font-size: 1.5em; }
-            .section-label { font-size: 0.95em; }
-            .content { font-size: 0.95em; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="problem-header">
-        <span class="problem-number">8번</span>
-        <span class="problem-title">절댓값 방정식과 실근 (반응형)</span>
-    </div>
-
-    <div class="section-block">
-        <div class="section-label idea-label">1. 문제 분석 및 발상</div>
-        <div class="content">
-            <strong>① 정의구역 제한:</strong><br>
-            \(g(x) \ge 0 \implies 2x^2-2 \ge 0\)<br>
-            따라서 <span class="highlight">\(|x| \ge 1\)</span>인 범위만 유효합니다.<br><br>
-            <strong>② 그래프의 교점:</strong><br>
-            $$ \begin{cases} x^3-2x^2+8 = kx \quad (h_1) \\ x^3+2x^2+4 = kx \quad (h_2) \end{cases} $$
-        </div>
-    </div>
-
-    <div class="section-block">
-        <div class="section-label solution-label">2. 단계별 풀이 (ㄱ, ㄴ)</div>
-        <div class="content">
-            <strong>[ㄱ] \(k=0\)일 때</strong><br>
-            \(x^3+2x^2+4=0\)은 \(x<0\)에서 실근 1개. <span class="highlight">참</span><br><br>
-            <strong>[ㄴ] 실근 2개 조건</strong><br>
-            \(x^3 - 2x^2 + 8 = kx\) 접선 확인.<br>
-            <div class="calculation-box">
-                k=4 대입:<br>
-                x³-2x²-4x+8 = 0<br>
-                (x-2)²(x+2) = 0<br>
-                ∴ x=2 중근 (접함)
-            </div>
-            \(k=4\)일 때 접하므로 2개. <span class="highlight">참</span>
-        </div>
-    </div>
-
-    <div class="section-block" style="border: 2px solid #27ae60;">
-        <div class="section-label killer-label">3. 심층 분석 (ㄷ 보기)</div>
-        <div class="content">
-            슬라이더를 움직여보세요.<br>
-            <span style="color:#c0392b; font-weight:bold;">k=7</span>일 때 중복근이 생깁니다.
-        </div>
-
-        <div id="graph-wrapper">
-            <div class="legend">
-                <span><span class="dot" style="background:#3498db;"></span>h₁</span>
-                <span><span class="dot" style="background:#2ecc71;"></span>h₂</span>
-                <span><span class="dot" style="background:#e67e22;"></span>kx</span>
-                <span><span class="dot" style="background:#ccc;"></span>무효</span>
-            </div>
-            
-            <div id="graph-container"></div>
-            
-            <div class="controls">
-                <div class="slider-container">
-                    <span style="font-size:0.9em; font-weight:bold;">k조절:</span>
-                    <input type="range" id="k-slider" min="0" max="12" step="1" value="0">
-                    <span class="k-value-display" id="k-display">0</span>
-                </div>
-                <div class="status-message" id="status-msg">슬라이더를 움직여보세요</div>
-            </div>
-        </div>
-
-        <div class="content" style="margin-top: 15px;">
-            <strong>[결론]</strong><br>
-            - <strong>k=7:</strong> (1, 7)에서 세 그래프가 만나 <strong>중복근</strong> 발생. (5개 안됨)<br>
-            - <strong>k>7:</strong> 회색 구간 교점은 무효.<br>
-            ∴ 5개인 k는 없음. <span class="highlight">거짓</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    // 페이지 로드 시 & 화면 크기 변경 시 그래프 크기 자동 조절
-    const kSlider = document.getElementById('k-slider');
-    const kDisplay = document.getElementById('k-display');
-    const statusMsg = document.getElementById('status-msg');
-    
-    function updateGraph(k) {
-        // 현재 컨테이너의 너비를 가져와서 그래프 너비로 설정 (반응형의 핵심)
-        const container = document.getElementById('graph-container');
-        const width = container.offsetWidth;
-        const height = container.offsetHeight;
-        
-        // 상태 메시지
-        let msg = "";
-        let color = "#555";
-        let weight = "normal";
-
-        if (k == 4) {
-            msg = "✅ k=4: 파란 곡선 접함 (ㄴ 참)";
-            color = "#d35400"; weight = "bold";
-        } else if (k == 7) {
-            msg = "🔥 k=7: (1, 7)에서 셋 다 만남! (중근)";
-            color = "#c0392b"; weight = "bold";
-        } else if (k > 7) {
-            msg = "회색 구간 교점은 무효입니다.";
-            color = "#7f8c8d";
-        } else {
-            msg = `기울기 k = ${k}`;
-        }
-
-        statusMsg.textContent = msg;
-        statusMsg.style.color = color;
-        statusMsg.style.fontWeight = weight;
-
-        functionPlot({
-            target: '#graph-container',
-            width: width,
-            height: height,
-            yAxis: { domain: [-5, 20] },
-            xAxis: { domain: [-3, 3] },
-            grid: true,
-            data: [
-                { fn: '1000*(x-1)', color: '#ddd', fnType: 'implicit', skipTip: true },
-                { fn: '1000*(x+1)', color: '#ddd', fnType: 'implicit', skipTip: true },
-                { fn: 'x^3 - 2*x^2 + 8', color: '#3498db', skipTip: true }, 
-                { fn: 'x^3 + 2*x^2 + 4', color: '#2ecc71', skipTip: true }, 
-                { fn: `${k} * x`, color: '#e67e22', graphType: 'polyline', skipTip: true }
-            ],
-            // 모바일에서 팁이 너무 크게 뜨는 것 방지
-            tip: {
-                xLine: true,
-                yLine: true,
-            }
-        });
+  <meta charset="UTF-8">
+  <title>2025 WINTER SCHOOL 운영 안내</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm;
     }
 
-    // 초기 실행
-    window.onload = function() {
-        updateGraph(0);
-    };
+    body {
+      font-family: "Nanum Gothic", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+      line-height: 1.7;
+      font-size: 14px;
+      color: #000;
+    }
 
-    // 슬라이더 조작 시
-    kSlider.addEventListener('input', function() {
-        const k = parseInt(this.value);
-        kDisplay.textContent = k;
-        updateGraph(k);
-    });
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
 
-    // 화면 크기가 바뀔 때(가로모드 등) 그래프 다시 그리기
-    window.addEventListener('resize', function() {
-        updateGraph(parseInt(kSlider.value));
-    });
-</script>
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
 
+    h2 {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-top: 28px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    ul {
+      margin: 8px 0 8px 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #000;
+      padding: 6px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f2f2f2;
+      font-weight: bold;
+    }
+
+    .notice {
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .footer {
+      margin-top: 35px;
+    }
+
+    .contact {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <h1>에듀메카학원 수학과</h1>
+  <h2>2025학년도 WINTER SCHOOL 운영 안내</h2>
+
+  <p>학부모님께.</p>
+  <p>
+    안녕하십니까.<br>
+    에듀메카학원 수학과입니다.
+  </p>
+  <p>
+    다가오는 겨울방학을 맞아 고등부 학생들의 학업 역량 강화를 위해
+    <strong>「2025 WINTER SCHOOL」</strong>을 아래와 같이 운영하고자 하오니,
+    자녀의 학습 계획 수립에 참고해 주시기 바랍니다.
+  </p>
+<br>
+
+  <h3>1. WINTER SCHOOL 운영 취지</h3>
+  <p>
+   최근 고등학교 내신 수학 시험은 출제 구조가 빠르게 변하고 있습니다. 교과서 기반 문제의 비중은 줄어드는 반면, 모의고사 유형을 변형한 문제와 고난도 문항의 비중이 늘어나면서 단순한 문제 반복이나 진도 위주의 학습만으로는 안정적인 성적을 확보하기 어려워졌습니다. 이제는 풀어본 문제를 잘 푸는 것보다, 처음 보는 형태의 문제도 조건을 해석하고 전략적으로 접근해 끝까지 해결할 수 있는 ‘문제 해결력’이 성적을 좌우합니다.
+  </p>
+  <p>
+    겨울방학은 이러한 실전 대응력을 만들 수 있는 가장 중요한 시기입니다. 학기 중에는 학교 일정과 과제로 인해 고난도 유형 훈련 시간을 충분히 확보하기 어렵지만, 방학에는 집중적인 반복 훈련과 풀이 습관 교정이 가능합니다. 에듀메카학원 수학과 WINTER SCHOOL은 모의고사 고난도 유형을 체계적으로 훈련하여, 학생들이 스스로 문제를 분석하고 해결하는 힘을 갖추도록 지도합니다. 또한 학생의 수준에 따라 모의고사 유형반과 **기초반(교과서 반복 훈련)**을 분리 운영하여, 무리 없이 단계적으로 실력을 끌어올릴 수 있도록 운영됩니다.
+  </p>
+<br>
+  <h3>2. 수업 구성 및 운영 방식</h3>
+  <p><strong>① 고등부 모의고사 유형 집중반</strong></p>
+  <ul>
+    <li>고1 : 공통수학 1 모의고사 유형</li>
+    <li>고2 : 대수 모의고사 유형</li>
+    <li>고3 : 미적분 모의고사 유형</li>
+  </ul>
+
+  <p><strong>② 기초반 운영</strong></p>
+ <ul>
+ <li>고2 : 대수 내신대비 교과서 반복 훈련</li>
+</ul>
+<br><br><br><br><br><br><br>
+  <h3>3. 수업 일정</h3>
+  <p>
+    <strong>수업 기간 : 2025년 1월 12일 ~ 2월 28일</strong>
+  </p>
+
+  <table>
+    <tr>
+      <th>월요일</th>
+      <th>화요일</th>
+      <th>수요일</th>
+      <th>목요일</th>
+      <th>금요일</th>
+      <th>토요일</th>
+    </tr>
+
+    <tr>
+      <td>1/12<br>고3 미적 모고</td>
+      <td>1/13<br>고1 공수1 모고</td>
+      <td>1/14<br>고2 대수 모고/기초</td>
+      <td>1/15<br>고3 미적 모고</td>
+      <td>1/16<br>고2 대수 모고/기초</td>
+      <td>1/17<br>고1 공수1 모고</td>
+    </tr>
+
+    <tr>
+      <td>1/19<br>고3 미적 모고</td>
+      <td>1/20<br>고1 공수1 모고</td>
+      <td>1/21<br>고2 대수 모고/기초</td>
+      <td>1/22<br>고3 미적 모고</td>
+      <td>1/23<br>고2 대수 모고/기초</td>
+      <td>1/24<br>고1 공수1 모고</td>
+    </tr>
+
+    <tr>
+      <td>1/26<br>고3 미적 모고</td>
+      <td>1/27<br>고1 공수1 모고</td>
+      <td>1/28<br>고2 대수 모고/기초</td>
+      <td>1/29<br>고3 미적 모고</td>
+      <td>1/30<br>고2 대수 모고/기초</td>
+      <td>1/31<br>고1 공수1 모고</td>
+    </tr>
+
+    <tr>
+      <td>2/2<br>고3 미적 모고</td>
+      <td>2/3<br>고1 공수1 모고</td>
+      <td>2/4<br>고2 대수 모고/기초</td>
+      <td>2/5<br>고3 미적 모고</td>
+      <td>2/6<br>고2 대수 모고/기초</td>
+      <td>2/7<br>고1 공수1 모고</td>
+    </tr>
+
+    <tr>
+      <td>2/9<br>고3 미적 모고</td>
+      <td>2/10<br>고1 공수1 모고</td>
+      <td>2/11<br>고2 대수 모고/기초</td>
+      <td>2/12<br>고3 미적 모고</td>
+      <td>2/13<br>고2 대수 모고/기초</td>
+      <td>2/14<br>고1 공수1 모고</td>
+    </tr>
+
+    <tr>
+      <td>2/16</td>
+      <td>2/17</td>
+      <td>2/18</td>
+      <td>2/19<br>고3 미적 모고</td>
+      <td>2/20<br>고2 대수 모고/기초</td>
+      <td>2/21<br>고1 공수1 모고</td>
+    </tr>
+
+    <tr>
+      <td>2/23<br>고3 미적 모고</td>
+      <td>2/24<br>고1 공수1 모고</td>
+      <td>2/25<br>고2 대수 모고/기초</td>
+      <td>2/26<br>고3 미적 모고</td>
+      <td>2/27<br>고2 대수 모고/기초</td>
+      <td>2/28<br>고1 공수1 모고</td>
+    </tr>
+  </table>
+
+<br>
+  <p>
+    <strong>수업 시간</strong>
+  </p>
+  <p> <strong>
+    월요일~금요일 : 19:00~22:00 <br>
+    토요일 : 10:30~13:30
+  </p></strong>
+
+
+  <h3>4. 수강료 안내</h3>
+  <table>
+    <tr>
+      <th>구분</th>
+      <th>1월</th>
+      <th>2월</th>
+    </tr>
+    <tr>
+      <td>일반 수강생</td>
+      <td>180,000원</td>
+      <td>200,000원</td>
+    </tr>
+    <tr>
+      <td>기존 선행반 수강생</td>
+      <td>90,000원</td>
+      <td>100,000원</td>
+    </tr>
+  </table>
+
+  <p class="notice">
+    ※ 정규수업과 동일한 수업량으로 진행되며,
+    방학 특강 기간 학부모님들의 부담을 덜어드리고자 비용을 합리적으로 조정하였습니다.
+  </p>
+
+  <div class="footer">
+    <h3>5. 상담 및 문의</h3>
+    <p class="contact">
+      에듀메카학원 수학과 (원곡동)<br>
+      ☎ 031-403-0205
+    </p>
+  </div>
+
+</div>
 </body>
 </html>
